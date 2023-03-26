@@ -1,0 +1,11 @@
+.build/
+
+release/
+
+*.log
+
+# Jetbrains
+.idea/
+
+# VS Code
+.vscode/

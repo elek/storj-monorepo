@@ -1,0 +1,152 @@
+// Copyright (C) 2021 Storj Labs, Inc.
+// See LICENSE for copying information.
+
+syntax = "proto3";
+
+package types;
+
+import "pico.proto";
+
+enum Language {
+  UNKNOWN = 0;
+  ENGLISH = 1;
+  SPANISH = 3;
+  FRENCH = 4;
+  GERMAN = 5;
+}
+
+message Types {
+  int32    int32 = 1;
+  int64    int64 = 2;
+  uint32   uint32 = 3;
+  uint64   uint64 = 4;
+  sint32   sint32 = 5;
+  sint64   sint64 = 6;
+  fixed32  fixed32 = 7;
+  fixed64  fixed64 = 8;
+  sfixed32 sfixed32 = 9;
+  sfixed64 sfixed64 = 10;
+  float    float = 11;
+  double   double = 12;
+  bool     bool = 13;
+  string   string = 14;
+  bytes    bytes = 15;
+
+  Message message = 16 [(pico.field).always_present = true];
+  OptionalMessage optional_message = 17;
+
+  Language language = 18;
+}
+
+message RepeatedTypes {
+  repeated int32    int32 = 1;
+  repeated int64    int64 = 2;
+  repeated uint32   uint32 = 3;
+  repeated uint64   uint64 = 4;
+  repeated sint32   sint32 = 5;
+  repeated sint64   sint64 = 6;
+  repeated fixed32  fixed32 = 7;
+  repeated fixed64  fixed64 = 8;
+  repeated sfixed32 sfixed32 = 9;
+  repeated sfixed64 sfixed64 = 10;
+  repeated float    float = 11;
+  repeated double   double = 12;
+  repeated bool     bool = 13;
+  repeated string   string = 14;
+  repeated bytes    bytes = 15;
+  repeated Message  message = 16;
+  repeated Language language = 17;
+}
+
+message RepeatedMixed {
+  int32    int32 = 1;
+  repeated Message  message = 16;
+}
+
+message Message {
+  int32 int32 = 1;
+  int64 int64 = 2;
+}
+
+message Person {
+  string   name = 1;
+  int64    birthday = 2;
+  string   phone = 3;
+  int32    siblings = 4;
+  bool     spouse = 5;
+  double   money = 6;
+  Language primary = 7;
+  repeated Language spoken = 8;
+}
+
+message Map {
+  map<string, string>   string_string = 1;
+
+  map<string, int32>    string_int32 = 2;
+  map<string, int64>    string_int64 = 3;
+  map<string, uint32>   string_uint32 = 4;
+  map<string, uint64>   string_uint64 = 5;
+  map<string, sint32>   string_sint32 = 6;
+  map<string, sint64>   string_sint64 = 7;
+  map<string, fixed32>  string_fixed32 = 8;
+  map<string, fixed64>  string_fixed64 = 9;
+  map<string, sfixed32> string_sfixed32 = 10;
+  map<string, sfixed64> string_sfixed64 = 11;
+  map<string, float>    string_float = 12;
+  map<string, double>   string_double = 13;
+  map<string, bool>     string_bool = 14;
+  map<string, bytes>    string_bytes = 16;
+
+  map<int32, string>    int32_string = 17;
+  map<int64, string>    int64_string = 18;
+  map<uint32, string>   uint32_string = 19;
+  map<uint64, string>   uint64_string = 20;
+  map<sint32, string>   sint32_string = 21;
+  map<sint64, string>   sint64_string = 22;
+  map<fixed32, string>  fixed32_string = 23;
+  map<fixed64, string>  fixed64_string = 24;
+  map<sfixed32, string> sfixed32_string = 25;
+  map<sfixed64, string> sfixed64_string = 26;
+  map<bool, string>     bool_string = 27;
+}
+
+message OptionalMessage {
+  int32 int32 = 1;
+}
+
+message CommandMessage {
+  string class = 1;
+  oneof command {
+    string name = 2;
+    Message message = 3;
+  }
+}
+
+/*
+Go generator currently does not support explicit optional types.
+
+message OptionalTypes {
+	optional int32    int32    =  1;
+	optional int64    int64    =  2;
+	optional uint32   uint32   =  3;
+	optional uint64   uint64   =  4;
+	optional sint32   sint32   =  5;
+	optional sint64   sint64   =  6;
+	optional fixed32  fixed32  =  7;
+	optional fixed64  fixed64  =  8;
+	optional sfixed32 sfixed32 =  9;
+	optional sfixed64 sfixed64 = 10;
+	optional float    float    = 11;
+	optional double   double   = 12;
+	optional bool     bool     = 13;
+	optional string   string   = 14;
+	optional bytes    bytes    = 15;
+
+	optional Message message = 16;
+	optional OptionalMessage optional_message = 17;
+}
+
+message OptionalMessage {
+	optional int32 optional_int32 = 1;
+}
+*/

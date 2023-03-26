@@ -1,0 +1,88 @@
+{{ if .SupportRx }}
+type Rx struct {
+	db *DB
+	tx *Tx
+}
+
+func (rx *Rx) UnsafeTx(ctx context.Context) (unsafe_tx *sql.Tx, err error) {
+	tx, err := rx.getTx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return tx.Tx, nil
+}
+
+func (rx *Rx) getTx(ctx context.Context) (tx *Tx, err error) {
+	if rx.tx == nil {
+		if rx.tx, err = rx.db.Open(ctx); err != nil {
+			return nil, err
+		}
+	}
+	return rx.tx, nil
+}
+
+func (rx *Rx) Rebind(s string) string {
+	return rx.db.Rebind(s)
+}
+
+func (rx *Rx) Commit() (err error) {
+	if rx.tx != nil {
+		err = rx.tx.Commit()
+		rx.tx = nil
+	}
+	return err
+}
+
+func (rx *Rx) Rollback() (err error) {
+	if rx.tx != nil {
+		err = rx.tx.Rollback()
+		rx.tx = nil
+	}
+	return err
+}
+
+{{ range .Methods }}
+func (rx *Rx) {{ .Signature }} {
+	var tx *Tx
+	if tx, err = rx.getTx(ctx); err != nil {
+		return 
+	}
+	return tx.{{ .Invoke }}
+}
+{{ end }}
+{{ end }}
+
+type Methods interface {
+{{- range .Methods }}
+	{{ .Signature }}
+{{ end }}
+}
+
+type TxMethods interface {
+	Methods
+
+	Rebind(s string) string
+	Commit() error
+	Rollback() error
+}
+
+type txMethods interface {
+	TxMethods
+
+	deleteAll(ctx context.Context) (int64, error)
+	makeErr(err error) error
+}
+
+type DBMethods interface {
+	Methods
+
+	Schema() string
+	Rebind(sql string) string
+}
+
+type dbMethods interface {
+	DBMethods
+
+	wrapTx(tx *sql.Tx) txMethods
+	makeErr(err error) error
+}

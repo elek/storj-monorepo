@@ -1,0 +1,31 @@
+{{- define "signature" -}}
+Delete_{{ .Suffix }}({{ ctxparam .Args }}) (
+	deleted bool, err error)
+{{- end -}}
+
+{{- define "invoke" -}}
+Delete_{{ .Suffix }}({{ ctxarg .Args }})
+{{- end -}}
+
+{{- define "body" -}}
+	{{ embedplaceholders .Info }}
+	{{ embedsql .Info "__embed_stmt" }}
+
+	var __values []interface{}
+	{{ embedvalues .Args "__values" }}
+
+	var __stmt = __sqlbundle_Render(obj.dialect, __embed_stmt)
+	obj.logStmt(__stmt, __values...)
+
+	__res, err := obj.driver.ExecContext(ctx, __stmt, __values...)
+	if err != nil {
+		return false, obj.makeErr(err)
+	}
+
+	__count, err := __res.RowsAffected()
+	if err != nil {
+		return false, obj.makeErr(err)
+	}
+
+	return __count > 0, nil
+{{ end -}}

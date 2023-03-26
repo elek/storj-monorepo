@@ -1,0 +1,11 @@
+model foo (
+	key pk
+
+	field pk serial64
+	field one int
+	field two int
+)
+
+read all (
+	select foo.one foo.two
+)

@@ -1,0 +1,9 @@
+model foo (
+	key pk
+
+	field pk serial64
+)
+
+read paged (
+	select foo.pk
+)

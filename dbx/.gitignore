@@ -1,0 +1,7 @@
+./bin/dbx
+.DS_Store
+vendor
+
+.vscode
+dbx
+testdata/run/*/*.dbx.go

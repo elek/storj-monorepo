@@ -1,0 +1,9 @@
+{{- define "struct" }}
+type {{ .Name }} struct {
+{{ range .Fields }}
+	{{ if .Name }}{{ .Name }} {{ end }}{{ .Type }}{{ if .Tags -}}
+	`{{ range $i, $t := .Tags -}}{{ if $i }} {{ end }}{{ .Key }}:{{ .Value | printf "%q" }}{{ end }}`
+	{{- end -}}
+{{ end }}
+}
+{{ end -}}

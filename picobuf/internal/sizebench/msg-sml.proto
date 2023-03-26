@@ -1,0 +1,66 @@
+// Copyright (C) 2021 Storj Labs, Inc.
+// See LICENSE for copying information.
+
+syntax = "proto3";
+
+package sml;
+
+message Nop {}
+
+message Types {
+  int32 int32 = 1;
+}
+
+message TypesUnused {
+  int32    int32 = 1;
+  int64    int64 = 2;
+  uint32   uint32 = 3;
+  uint64   uint64 = 4;
+  sint32   sint32 = 5;
+  sint64   sint64 = 6;
+  fixed32  fixed32 = 7;
+  fixed64  fixed64 = 8;
+  sfixed32 sfixed32 = 9;
+  sfixed64 sfixed64 = 10;
+  float    float = 11;
+  double   double = 12;
+  bool     bool = 13;
+  string   string = 14;
+  bytes    bytes = 15;
+
+  Message message = 16;
+  Language language = 17;
+
+  repeated int32    int32s = 18;
+  repeated int64    int64s = 19;
+  repeated uint32   uint32s = 20;
+  repeated uint64   uint64s = 21;
+  repeated sint32   sint32s = 22;
+  repeated sint64   sint64s = 23;
+  repeated fixed32  fixed32s = 24;
+  repeated fixed64  fixed64s = 25;
+  repeated sfixed32 sfixed32s = 26;
+  repeated sfixed64 sfixed64s = 27;
+  repeated float    floats = 28;
+  repeated double   doubles = 29;
+  repeated bool     bools = 30;
+  repeated string   strings = 31;
+  repeated bytes    bytess = 32;
+
+  repeated Message messages = 33;
+  repeated Language languages = 34;
+
+  map<string, string> values = 35;
+}
+
+enum Language {
+  UNKNOWN = 0;
+  ENGLISH = 1;
+  SPANISH = 3;
+  FRENCH = 4;
+  GERMAN = 5;
+}
+
+message Message {
+  int32 int32 = 1;
+}

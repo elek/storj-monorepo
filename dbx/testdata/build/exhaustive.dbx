@@ -1,0 +1,338 @@
+// this file attempts to be exhaustive in dbx features just to give a good
+// spot check that we didn't ruin everything.
+
+model a (
+	key    pk
+	unique id
+	unique name
+	index  (
+		fields ctime mtime
+		unique
+	)
+
+	field pk    serial64
+	field ctime timestamp ( autoinsert )
+	field mtime timestamp ( autoinsert, autoupdate )
+	field id    text
+	field name  text
+)
+
+model b (
+	key    pk
+	unique id
+
+	field pk   serial64
+	field id   text
+	field data text     ( updatable )
+)
+
+model c (
+	key    pk
+	unique id
+
+	field pk   serial64
+	field id   text
+	field b_pk b.pk     cascade
+)
+
+model d (
+	key    pk
+	unique id
+	unique a_id alias
+
+	field pk    serial64
+	field id    text
+	field alias text              ( nullable, updatable )
+	field date  timestamp         ( autoinsert )
+	field e_id  e.id     restrict
+	field a_id  a.id     cascade
+)
+
+model a_b (
+	key   b_pk a_pk
+	field b_pk b.pk cascade
+	field a_pk a.pk cascade
+)
+
+model e (
+	key    pk
+	unique id
+
+	field pk   serial64
+	field id   text
+	field a_id a.id     cascade
+)
+
+create e ( )
+
+read one has (
+	select e
+	where  e.id   =   ?
+	where  e.a_id =   ?
+)
+
+read paged (
+	select e
+	where  e.a_id = ?
+)
+
+delete e (
+	where e.id   = ?
+	where e.a_id = ?
+)
+
+delete e ( )
+
+create d ( )
+
+create d ( raw )
+
+read one (
+	select d
+	where  d.id = ?
+)
+
+read one (
+	select d
+	where  d.id   = ?
+	where  d.a_id = ?
+)
+
+read one (
+	select d
+	where  d.alias = ?
+	where  d.a_id  = ?
+)
+
+read paged (
+	select d
+	where  d.a_id = ?
+)
+
+update d (
+	where d.id   = ?
+	where d.a_id = ?
+)
+
+delete d (
+	where d.id   = ?
+	where d.a_id = ?
+)
+
+create a ( )
+
+read one (
+	select a
+	where  a.pk = ?
+)
+
+read one (
+	select a
+	join   a.pk     = a_b.a_pk
+	join   a_b.b_pk = b.pk
+	where  a.id     = ?
+	where  b.id     = ?
+)
+
+update a (
+	join  a.pk     = a_b.a_pk
+	join  a_b.b_pk = b.pk
+	where a.id     = ?
+	where b.id     = ?
+)
+
+delete a (
+	join  a.pk     = a_b.a_pk
+	join  a_b.b_pk = b.pk
+	where a.id     = ?
+	where b.id     = ?
+)
+
+read one (
+	select a
+	join   a.pk     = a_b.a_pk
+	join   a_b.b_pk = b.pk
+	where  a.name   = ?
+	where  b.id     = ?
+)
+
+read paged (
+	select a
+	join   a.pk     = a_b.a_pk
+	join   a_b.b_pk = b.pk
+	where  b.id     = ?
+)
+
+create a_b ( )
+
+create c ( )
+
+read one (
+	select c
+	where  c.id = ?
+)
+
+create b ( )
+
+read one (
+	select b
+	where  b.pk = ?
+)
+
+read all (
+	select b
+	where  b.data = ?
+)
+
+read all (
+	select b
+)
+
+update b (
+	where b.id = ?
+)
+
+update b (
+	where b.id = ?
+	noreturn
+)
+
+model foo (
+	key id
+
+	field id serial64
+	field int int (updatable)
+	field int64 int64 (updatable)
+	field uint uint (updatable)
+	field uint64 uint64 (updatable)
+	field float float (updatable)
+	field float64 float64 (updatable)
+	field string text (updatable)
+	field blob blob (updatable)
+	field timestamp timestamp (updatable, autoinsert)
+	field utimestamp utimestamp (updatable, autoinsert, autoupdate)
+	field bool bool (updatable)
+	field date date (updatable)
+	field json json (updatable)
+
+	field null_int int (nullable, updatable)
+	field null_int64 int64 (nullable, updatable)
+	field null_uint uint (nullable, updatable)
+	field null_uint64 uint64 (nullable, updatable)
+	field null_float float (nullable, updatable)
+	field null_float64 float64 (nullable, updatable)
+	field null_string text (nullable, updatable)
+	field null_blob blob (nullable, updatable)
+	field null_timestamp timestamp (nullable, updatable)
+	field null_utimestamp utimestamp (nullable, updatable)
+	field null_bool bool (nullable, updatable)
+	field null_date date (nullable, updatable, autoupdate)
+	field null_json json (nullable, updatable)
+)
+
+create foo ( )
+
+create foo ( raw )
+
+create foo ( noreturn )
+
+create foo ( raw, noreturn )
+
+update foo (
+	where foo.id = ?
+)
+
+update foo (
+	where foo.id = ?
+	noreturn
+)
+
+read all paged limitoffset has count (
+	select foo
+)
+
+read scalar one first has count (
+	select foo
+	where foo.id = ?
+)
+
+read all (
+	select foo.bool foo.int
+)
+
+read first (
+	select foo
+	where  foo.null_int    =  ?
+	where  foo.int         =  ?
+	where  foo.null_int64  != ?
+	where  foo.null_uint   =  ?
+	where  foo.uint        =  ?
+	where  foo.null_uint64 != ?
+)
+
+update foo (
+	where foo.null_int    =  ?
+	where foo.int         =  ?
+	where foo.null_int64  != ?
+	where foo.null_uint   =  ?
+	where foo.uint        =  ?
+	where foo.null_uint64 != ?
+	where foo.id          =  ?
+)
+
+read scalar (
+	select foo
+	where foo.int = 3
+)
+
+read scalar (
+	select foo
+	where foo.null_int = null
+)
+
+read scalar (
+	select foo
+	where foo.string = "boo"
+)
+
+read scalar (
+	select foo
+	where lower(foo.string) = ?
+)
+
+read scalar (
+	select foo
+	where lower(foo.string) = lower(?)
+)
+
+read scalar (
+	select foo
+	where foo.string = lower(?)
+)
+
+read scalar (
+	select foo
+	where foo.string = lower("BOO")
+)
+
+read scalar (
+	select foo
+	where foo.bool = true
+)
+
+read scalar (
+	select foo
+	where foo.null_bool = false
+)
+
+delete foo ( )
+
+read scalar (
+    select foo
+    orderby asc foo.string
+)
+
+read scalar (
+    select foo
+    groupby foo.string
+)
